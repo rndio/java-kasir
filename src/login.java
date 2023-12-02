@@ -12,14 +12,8 @@
 
 import Function.*;
 import com.formdev.flatlaf.FlatLightLaf;
-//import java.math.BigInteger;
-//import java.security.MessageDigest;
-//import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.ResultSet;
+import java.sql.*;
 import javax.swing.JOptionPane;
-import java.sql.SQLException;
 import javax.swing.UIManager;
 
 
@@ -38,17 +32,6 @@ public class login extends javax.swing.JFrame {
         initComponents();
     }
     
-//    private static String md5(String input) {
-//        try {
-//            MessageDigest md = MessageDigest.getInstance("MD5");
-//            byte[] messageDigest = md.digest(input.getBytes());
-//            BigInteger no = new BigInteger(1, messageDigest);
-//            return no.toString(16);
-//        } catch (NoSuchAlgorithmException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -140,9 +123,11 @@ public class login extends javax.swing.JFrame {
         String username = inputUsername.getText();
         String password = inputPassword.getText();
         try{
-            Statement st = cn.createStatement();
-            String sql = "SELECT * FROM tbl_users where username='" + username + "' AND password=MD5('"+ password +"') LIMIT 1;";
-            ResultSet rs = st.executeQuery(sql);
+            String sql = "SELECT * FROM tbl_users WHERE username = ? AND password = MD5(?) LIMIT 1";
+            PreparedStatement myStmt = cn.prepareStatement(sql);
+            myStmt.setString(1, username);
+            myStmt.setString(2, password);
+            ResultSet rs = myStmt.executeQuery();
             
             if(rs.next()){
                 this.dispose();

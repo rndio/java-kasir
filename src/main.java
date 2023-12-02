@@ -6,6 +6,7 @@
  */
 
 import com.formdev.flatlaf.FlatLightLaf;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -18,7 +19,6 @@ public class main {
      * @param args the command line arguments
      */
     
-    
     public static void main(String[] args){
         try {
             UIManager.setLookAndFeel( new FlatLightLaf() );
@@ -30,7 +30,7 @@ public class main {
             login form = new login();
             form.setVisible(true);
         }catch(Exception e){
-            System.err.println(e);
+            JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }
     

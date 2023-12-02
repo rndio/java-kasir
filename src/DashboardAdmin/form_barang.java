@@ -41,7 +41,9 @@ public class form_barang extends javax.swing.JFrame {
             while (rs.next()) {
                 id_jenis.addItem(rs.getString("nama"));
             }
-        }catch (SQLException e){e.printStackTrace();}
+        }catch (SQLException e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
     }
     
     private void clearForm(){

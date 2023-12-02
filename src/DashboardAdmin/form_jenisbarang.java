@@ -4,9 +4,7 @@
  */
 package DashboardAdmin;
 
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.ResultSet;
+import java.sql.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -24,10 +22,13 @@ public class form_jenisbarang extends javax.swing.JFrame {
     public form_jenisbarang() {
         initComponents();
         getDataTable();
+        inputIdJenisBarang.setVisible(false);
     }
     
     private void clearForm(){
         inputJenisBarang.setText("");
+        inputIdJenisBarang.setText("");
+        actionBtn.setText("Create");
     }
     
     private void getDataTable(){
@@ -48,8 +49,9 @@ public class form_jenisbarang extends javax.swing.JFrame {
                   rs.getString("id"),
                   rs.getString("nama")
                 };
-                model.addRow(data);   
+                model.addRow(data); 
             }
+            tableData.setCellEditor(null);
             tableData.setModel(model);
             
         }catch(Exception e){
@@ -69,11 +71,12 @@ public class form_jenisbarang extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         labelJenisBarang = new javax.swing.JLabel();
         inputJenisBarang = new javax.swing.JTextField();
-        btnCreate = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        actionBtn = new javax.swing.JButton();
+        deleteBtn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tableData = new javax.swing.JTable();
+        inputIdJenisBarang = new javax.swing.JTextField();
+        cancelBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -88,31 +91,56 @@ public class form_jenisbarang extends javax.swing.JFrame {
             }
         });
 
-        btnCreate.setText("Create");
-        btnCreate.addActionListener(new java.awt.event.ActionListener() {
+        actionBtn.setText("Create");
+        actionBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCreateActionPerformed(evt);
+                actionBtnActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Edit");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        deleteBtn.setText("Delete");
+        deleteBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                deleteBtnActionPerformed(evt);
             }
         });
-
-        jButton3.setText("Delete");
 
         tableData.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-
+                "ID", "Jenis Barang"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tableData.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableDataMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tableData);
+
+        cancelBtn.setText("Cancel");
+        cancelBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -121,41 +149,50 @@ public class form_jenisbarang extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnCreate)
+                        .addComponent(actionBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)
+                        .addComponent(deleteBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(cancelBtn))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(labelJenisBarang)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(inputJenisBarang)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 8, Short.MAX_VALUE)
+                                .addComponent(jLabel1)
+                                .addGap(58, 58, 58)
+                                .addComponent(inputIdJenisBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(10, 10, 10))
+                            .addComponent(inputJenisBarang))))
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(147, 147, 147)
-                .addComponent(jLabel1)
-                .addGap(0, 125, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(inputIdJenisBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(15, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelJenisBarang)
                     .addComponent(inputJenisBarang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCreate)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(actionBtn)
+                    .addComponent(deleteBtn)
+                    .addComponent(cancelBtn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(14, 14, 14))
         );
 
         pack();
@@ -166,11 +203,7 @@ public class form_jenisbarang extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_inputJenisBarangActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
+    private void actionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_actionBtnActionPerformed
         try{
             Statement st = cn.createStatement();
             if(inputJenisBarang.getText().equals("")){
@@ -179,17 +212,56 @@ public class form_jenisbarang extends javax.swing.JFrame {
             }
             
             // Simpan
-//            if(btnCreate.getText() == "Create"){
-                String sql = "INSERT INTO tbl_jenisbarang VALUES (NULL, '"+ inputJenisBarang.getText() +"')";
-                st.execute(sql);
+            if(actionBtn.getText().equals("Create")){
+                String sql = "INSERT INTO tbl_jenisbarang VALUES (NULL, ?)";
+                PreparedStatement myStmt = cn.prepareStatement(sql);
+                myStmt.setString(1, inputJenisBarang.getText());
+                myStmt.executeUpdate();
                 JOptionPane.showMessageDialog(null, "Data Berhasil Disimpan!");
                 clearForm();
-//            }
+            }else{
+                String sql = "UPDATE tbl_jenisbarang SET nama = ? WHERE id = ?";
+                PreparedStatement myStmt = cn.prepareStatement(sql);
+                myStmt.setString(1, inputJenisBarang.getText());
+                myStmt.setString(2, "1");
+                myStmt.executeUpdate();
+                clearForm();
+            }
+            getDataTable();
             
         }catch(Exception e){
             JOptionPane.showMessageDialog(null, e);
         }
-    }//GEN-LAST:event_btnCreateActionPerformed
+    }//GEN-LAST:event_actionBtnActionPerformed
+
+    private void tableDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableDataMouseClicked
+        inputIdJenisBarang.setText(tableData.getValueAt(tableData.getSelectedRow(), 0).toString());
+        inputJenisBarang.setText(tableData.getValueAt(tableData.getSelectedRow(), 1).toString());
+        actionBtn.setText("Ubah");
+    }//GEN-LAST:event_tableDataMouseClicked
+
+    private void cancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtnActionPerformed
+        clearForm();
+    }//GEN-LAST:event_cancelBtnActionPerformed
+
+    private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtnActionPerformed
+        if(inputJenisBarang.getText().equals("") && inputIdJenisBarang.getText().equals("")){
+            JOptionPane.showMessageDialog(null, "Data tidak boleh kosong!", "Validasi Data", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        try {
+            Statement st = cn.createStatement();
+            String sql = "DELETE FROM tbl_jenisbarang WHERE id = ?";
+            PreparedStatement myStmt = cn.prepareStatement(sql);
+            myStmt.setString(1, inputIdJenisBarang.getText());
+            myStmt.executeUpdate();   
+            getDataTable();
+            JOptionPane.showMessageDialog(null, "Data Berhasil Dihapus!");
+            clearForm();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }//GEN-LAST:event_deleteBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -227,10 +299,11 @@ public class form_jenisbarang extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCreate;
+    private javax.swing.JButton actionBtn;
+    private javax.swing.JButton cancelBtn;
+    private javax.swing.JButton deleteBtn;
+    private javax.swing.JTextField inputIdJenisBarang;
     private javax.swing.JTextField inputJenisBarang;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelJenisBarang;

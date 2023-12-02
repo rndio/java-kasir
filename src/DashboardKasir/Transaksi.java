@@ -78,14 +78,14 @@ public class Transaksi extends javax.swing.JFrame {
     
     private void cariBarang(){
         try{
-            Connection cn = Function.DatabaseConnection.getConnection();
-            
             String kodebarang = txtKodeBarang.getText();
+            
             String sql = "SELECT * FROM tbl_barang WHERE kd_barang = ? LIMIT 1";
             PreparedStatement myStmt = cn.prepareStatement(sql);
             myStmt.setString(1, kodebarang);
-            
             ResultSet rs = myStmt.executeQuery();
+            
+            
             if (rs.next()) {
                 do {
                     String namaBarang = rs.getString("nm_barang");
