@@ -32,6 +32,31 @@ public class login extends javax.swing.JFrame {
         initComponents();
     }
     
+    private void prosesLogin(){
+        String username = inputUsername.getText();
+        String password = inputPassword.getText();
+        try{
+            String sql = "SELECT * FROM tbl_users WHERE username = ? AND password = MD5(?) LIMIT 1";
+            PreparedStatement myStmt = cn.prepareStatement(sql);
+            myStmt.setString(1, username);
+            myStmt.setString(2, password);
+            ResultSet rs = myStmt.executeQuery();
+            
+            if(rs.next()){
+                this.dispose();
+                Integer role = Integer.valueOf(rs.getString("role"));
+                switch(role) {
+                    case 0 -> new DashboardAdmin.form_barang().show();
+                    case 1 -> new DashboardKasir.Transaksi().show();
+                }
+            }else{
+                 JOptionPane.showMessageDialog(null, "Username atau password salah!");
+            }
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -55,9 +80,9 @@ public class login extends javax.swing.JFrame {
 
         labelUsername.setText("Username");
 
-        inputUsername.addActionListener(new java.awt.event.ActionListener() {
+        inputPassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                inputUsernameActionPerformed(evt);
+                inputPasswordActionPerformed(evt);
             }
         });
 
@@ -115,34 +140,13 @@ public class login extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void inputUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputUsernameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_inputUsernameActionPerformed
-
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-        String username = inputUsername.getText();
-        String password = inputPassword.getText();
-        try{
-            String sql = "SELECT * FROM tbl_users WHERE username = ? AND password = MD5(?) LIMIT 1";
-            PreparedStatement myStmt = cn.prepareStatement(sql);
-            myStmt.setString(1, username);
-            myStmt.setString(2, password);
-            ResultSet rs = myStmt.executeQuery();
-            
-            if(rs.next()){
-                this.dispose();
-                Integer role = Integer.valueOf(rs.getString("role"));
-                switch(role) {
-                    case 0 -> new DashboardAdmin.form_barang().show();
-                    case 1 -> new DashboardKasir.Transaksi().show();
-                }
-            }else{
-                 JOptionPane.showMessageDialog(null, "Username atau password salah!");
-            }
-        }catch(SQLException e){
-            JOptionPane.showMessageDialog(null, e);
-        }
+        prosesLogin();
     }//GEN-LAST:event_btnLoginActionPerformed
+
+    private void inputPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputPasswordActionPerformed
+        prosesLogin();
+    }//GEN-LAST:event_inputPasswordActionPerformed
 
     /**
      * @param args the command line arguments

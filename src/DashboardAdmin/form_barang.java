@@ -119,6 +119,10 @@ public class form_barang extends javax.swing.JFrame {
         btn_batal = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         kd_barang = new javax.swing.JTextField();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenuBarang = new javax.swing.JMenu();
+        jMenuJenisBarang = new javax.swing.JMenu();
+        jMenuKasir = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -225,11 +229,31 @@ public class form_barang extends javax.swing.JFrame {
 
         jLabel7.setText("ID Barang");
 
-        kd_barang.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                kd_barangActionPerformed(evt);
+        jMenuBarang.setText("Barang");
+        jMenuBarang.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuBarangMouseClicked(evt);
             }
         });
+        jMenuBar1.add(jMenuBarang);
+
+        jMenuJenisBarang.setText("Jenis Barang");
+        jMenuJenisBarang.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuJenisBarangMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(jMenuJenisBarang);
+
+        jMenuKasir.setText("Kasir");
+        jMenuKasir.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuKasirMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(jMenuKasir);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -278,7 +302,7 @@ public class form_barang extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(26, 26, 26)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(16, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -381,7 +405,33 @@ public class form_barang extends javax.swing.JFrame {
                 }
             }else{
                 // Edit Action
+                PreparedStatement psmt = cn.prepareStatement("SELECT id FROM tbl_jenisbarang WHERE nama = ?");
+                psmt.setString(1, id_jenis.getSelectedItem().toString());
+                ResultSet hasil = psmt.executeQuery();
+
+                int jenis_id = 0;
+                if(hasil.next()){
+                    jenis_id = hasil.getInt("id");
+                }
                 
+                String dateString = tgl_exp.getText();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                Date tglExp = dateFormat.parse(dateString);
+                java.sql.Date sqlTglExp = new java.sql.Date(tglExp.getTime());
+                
+                String sql = "UPDATE tbl_barang SET nm_barang = ?, id_jenis = ?, jumlah = ?, tgl_exp = ?, harga = ? WHERE kd_barang = ?";
+                PreparedStatement myStmt = cn.prepareStatement(sql);
+                myStmt.setString(1, nm_barang.getText());
+                myStmt.setInt(2, jenis_id);
+                myStmt.setString(3, jumlah.getText());
+                myStmt.setDate(4, sqlTglExp);
+                myStmt.setInt(5, Integer.parseInt(harga.getText()));
+                myStmt.setString(6, kd_barang.getText());
+                myStmt.executeUpdate();
+                myStmt.close();
+                JOptionPane.showMessageDialog(null, "Data Berhasil Diubah!");
+                clearForm();
+                getDataTable();
                 
             }
         }catch(Exception e){
@@ -426,9 +476,23 @@ public class form_barang extends javax.swing.JFrame {
         btn_simpan.setText("Ubah");
     }//GEN-LAST:event_tableDataMouseClicked
 
-    private void kd_barangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kd_barangActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_kd_barangActionPerformed
+    private void jMenuBarangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuBarangMouseClicked
+        this.dispose();
+        form_barang form = new form_barang();
+        form.setVisible(true);
+    }//GEN-LAST:event_jMenuBarangMouseClicked
+
+    private void jMenuJenisBarangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuJenisBarangMouseClicked
+        this.dispose();
+        form_jenisbarang form = new form_jenisbarang();
+        form.setVisible(true);
+    }//GEN-LAST:event_jMenuJenisBarangMouseClicked
+
+    private void jMenuKasirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuKasirMouseClicked
+        this.dispose();
+        form_kasir form = new form_kasir();
+        form.setVisible(true);
+    }//GEN-LAST:event_jMenuKasirMouseClicked
 
     /**
      * @param args the command line arguments
@@ -479,6 +543,10 @@ public class form_barang extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu jMenuBarang;
+    private javax.swing.JMenu jMenuJenisBarang;
+    private javax.swing.JMenu jMenuKasir;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jumlah;
     private javax.swing.JTextField kd_barang;

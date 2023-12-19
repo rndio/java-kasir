@@ -5,10 +5,9 @@
 package DashboardAdmin;
 
 import Function.*;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -24,6 +23,38 @@ public class form_transaksi extends javax.swing.JFrame {
     
     public form_transaksi() {
         initComponents();
+        getDataTable();
+        txtIDTransaksi.setVisible(false);
+    }
+    
+    private void getDataTable(){
+        try{
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT tt.id_transaksi, tt.tgl_transaksi, tk.nm_kasir FROM `tbl_transaksi` AS tt LEFT JOIN tbl_kasir AS tk ON tt.id_kasir = tk.id_kasir");
+            
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("ID Transaksi");
+            model.addColumn("Nama Kasir");
+            model.addColumn("Tgl Transaksi");
+            
+            model.getDataVector().removeAllElements();
+            model.fireTableDataChanged();
+            model.setRowCount(0);
+            
+            while(rs.next()){
+                Object[] data = {
+                  rs.getString("id_transaksi"),
+                  rs.getString("nm_kasir"),
+                  rs.getString("tgl_transaksi")
+                };
+                model.addRow(data); 
+            }
+            tableData.setCellEditor(null);
+            tableData.setModel(model);
+            
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, e);
+        }
     }
 
     /**
@@ -36,18 +67,15 @@ public class form_transaksi extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        tgl_exp = new javax.swing.JFormattedTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
-        btn_simpan = new javax.swing.JButton();
-        btn_hapus = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        tableData = new javax.swing.JTable();
+        btnCetak = new javax.swing.JButton();
+        btnHapus = new javax.swing.JButton();
+        txtIDTransaksi = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        menu_barang = new javax.swing.JMenuItem();
-        menu_jenisbarang = new javax.swing.JMenuItem();
-        menu_kasir = new javax.swing.JMenuItem();
+        jMenuBarang = new javax.swing.JMenu();
+        jMenuJenisBarang = new javax.swing.JMenu();
+        jMenuKasir = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 153, 153));
@@ -55,29 +83,19 @@ public class form_transaksi extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Barlow", 1, 18)); // NOI18N
         jLabel1.setText("Form Transaksi");
 
-        jLabel5.setText("Search by Date");
-
-        tgl_exp.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd-MM-yyyy"))));
-        tgl_exp.setText("01-01-1970");
-        tgl_exp.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tgl_expActionPerformed(evt);
-            }
-        });
-
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tableData.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID Transaksi", "Nama Kasir", "Nama Barang", "Tgl Transaksi"
+                "ID Transaksi", "Nama Kasir", "Tgl Transaksi"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -88,59 +106,56 @@ public class form_transaksi extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(0).setResizable(false);
+        tableData.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableDataMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tableData);
+        if (tableData.getColumnModel().getColumnCount() > 0) {
+            tableData.getColumnModel().getColumn(0).setResizable(false);
         }
 
-        btn_simpan.setText("Cetak");
-        btn_simpan.addActionListener(new java.awt.event.ActionListener() {
+        btnCetak.setText("Cetak");
+        btnCetak.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_simpanActionPerformed(evt);
+                btnCetakActionPerformed(evt);
             }
         });
 
-        btn_hapus.setText("Hapus");
-        btn_hapus.addActionListener(new java.awt.event.ActionListener() {
+        btnHapus.setText("Hapus");
+        btnHapus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_hapusActionPerformed(evt);
+                btnHapusActionPerformed(evt);
             }
         });
 
-        jButton1.setText("Cari");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+        txtIDTransaksi.setEditable(false);
+        txtIDTransaksi.setText("0");
+
+        jMenuBarang.setText("Barang");
+        jMenuBarang.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuBarangMouseClicked(evt);
             }
         });
+        jMenuBar1.add(jMenuBarang);
 
-        jMenu1.setText("Menu");
-
-        menu_barang.setText("Barang");
-        menu_barang.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menu_barangActionPerformed(evt);
+        jMenuJenisBarang.setText("Jenis Barang");
+        jMenuJenisBarang.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuJenisBarangMouseClicked(evt);
             }
         });
-        jMenu1.add(menu_barang);
+        jMenuBar1.add(jMenuJenisBarang);
 
-        menu_jenisbarang.setText("Jenis Barang");
-        menu_jenisbarang.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menu_jenisbarangActionPerformed(evt);
+        jMenuKasir.setText("Kasir");
+        jMenuKasir.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuKasirMouseClicked(evt);
             }
         });
-        jMenu1.add(menu_jenisbarang);
-
-        menu_kasir.setText("Kasir");
-        menu_kasir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menu_kasirActionPerformed(evt);
-            }
-        });
-        jMenu1.add(menu_kasir);
-
-        jMenuBar1.add(jMenu1);
+        jMenuBar1.add(jMenuKasir);
 
         setJMenuBar(jMenuBar1);
 
@@ -150,82 +165,92 @@ public class form_transaksi extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(tgl_exp)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btn_simpan)
+                        .addComponent(btnCetak)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_hapus)))
+                        .addComponent(btnHapus))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(136, 136, 136)
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtIDTransaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(122, 122, 122)
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(11, 11, 11)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel5)
-                        .addComponent(tgl_exp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_simpan)
-                    .addComponent(btn_hapus))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel1)
+                    .addComponent(txtIDTransaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCetak)
+                    .addComponent(btnHapus))
+                .addContainerGap())
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tgl_expActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tgl_expActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tgl_expActionPerformed
+    private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
+        try {
+         String idTransaksi = tableData.getValueAt(tableData.getSelectedRow(), 0).toString();
+        JOptionPane.showMessageDialog(null, idTransaksi);   
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }//GEN-LAST:event_btnCetakActionPerformed
 
-    private void btn_simpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_simpanActionPerformed
+    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
+        int jawab = JOptionPane.showConfirmDialog(null, "Apakah anda yakin ingin menghapus data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+            if(jawab == 0){
+                try{
+                String idTransaksi = tableData.getValueAt(tableData.getSelectedRow(), 0).toString();
+                PreparedStatement psmt = cn.prepareStatement("DELETE FROM tbl_transaksi WHERE id_transaksi = ?");
+                psmt.setString(1, idTransaksi);
+                psmt.executeUpdate();
+                psmt.close();
+                JOptionPane.showMessageDialog(null, "Data Berhasil Dihapus!");
+                getDataTable();
+                }catch(Exception e){
+                    JOptionPane.showMessageDialog(null, "Pilih Data Telebih Dahulu!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+            }
+    }//GEN-LAST:event_btnHapusActionPerformed
 
-    }//GEN-LAST:event_btn_simpanActionPerformed
-
-    private void btn_hapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_hapusActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_hapusActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void menu_barangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_barangActionPerformed
-        new form_barang().show();
+    private void jMenuBarangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuBarangMouseClicked
         this.dispose();
-    }//GEN-LAST:event_menu_barangActionPerformed
+        form_barang form = new form_barang();
+        form.setVisible(true);
+    }//GEN-LAST:event_jMenuBarangMouseClicked
 
-    private void menu_jenisbarangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_jenisbarangActionPerformed
-        new form_jenisbarang().show();
+    private void jMenuJenisBarangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuJenisBarangMouseClicked
         this.dispose();
-    }//GEN-LAST:event_menu_jenisbarangActionPerformed
+        form_jenisbarang form = new form_jenisbarang();
+        form.setVisible(true);
+    }//GEN-LAST:event_jMenuJenisBarangMouseClicked
 
-    private void menu_kasirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_kasirActionPerformed
-        new form_kasir().show();
+    private void jMenuKasirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuKasirMouseClicked
         this.dispose();
-    }//GEN-LAST:event_menu_kasirActionPerformed
+        form_kasir form = new form_kasir();
+        form.setVisible(true);
+    }//GEN-LAST:event_jMenuKasirMouseClicked
+
+    private void tableDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableDataMouseClicked
+        txtIDTransaksi.setText(tableData.getValueAt(tableData.getSelectedRow(), 0).toString());
+    }//GEN-LAST:event_tableDataMouseClicked
 
     /**
      * @param args the command line arguments
@@ -266,18 +291,15 @@ public class form_transaksi extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btn_hapus;
-    private javax.swing.JButton btn_simpan;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnCetak;
+    private javax.swing.JButton btnHapus;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu jMenuBarang;
+    private javax.swing.JMenu jMenuJenisBarang;
+    private javax.swing.JMenu jMenuKasir;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JMenuItem menu_barang;
-    private javax.swing.JMenuItem menu_jenisbarang;
-    private javax.swing.JMenuItem menu_kasir;
-    private javax.swing.JFormattedTextField tgl_exp;
+    private javax.swing.JTable tableData;
+    private javax.swing.JTextField txtIDTransaksi;
     // End of variables declaration//GEN-END:variables
 }

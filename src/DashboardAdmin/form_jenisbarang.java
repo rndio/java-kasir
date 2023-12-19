@@ -77,6 +77,10 @@ public class form_jenisbarang extends javax.swing.JFrame {
         tableData = new javax.swing.JTable();
         inputIdJenisBarang = new javax.swing.JTextField();
         cancelBtn = new javax.swing.JButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenuBarang = new javax.swing.JMenu();
+        jMenuJenisBarang = new javax.swing.JMenu();
+        jMenuKasir = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -142,6 +146,32 @@ public class form_jenisbarang extends javax.swing.JFrame {
             }
         });
 
+        jMenuBarang.setText("Barang");
+        jMenuBarang.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuBarangMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(jMenuBarang);
+
+        jMenuJenisBarang.setText("Jenis Barang");
+        jMenuJenisBarang.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuJenisBarangMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(jMenuJenisBarang);
+
+        jMenuKasir.setText("Kasir");
+        jMenuKasir.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuKasirMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(jMenuKasir);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -179,7 +209,7 @@ public class form_jenisbarang extends javax.swing.JFrame {
                         .addComponent(inputIdJenisBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(15, Short.MAX_VALUE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -223,7 +253,7 @@ public class form_jenisbarang extends javax.swing.JFrame {
                 String sql = "UPDATE tbl_jenisbarang SET nama = ? WHERE id = ?";
                 PreparedStatement myStmt = cn.prepareStatement(sql);
                 myStmt.setString(1, inputJenisBarang.getText());
-                myStmt.setString(2, "1");
+                myStmt.setString(2, inputIdJenisBarang.getText());
                 myStmt.executeUpdate();
                 clearForm();
             }
@@ -262,6 +292,24 @@ public class form_jenisbarang extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }//GEN-LAST:event_deleteBtnActionPerformed
+
+    private void jMenuBarangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuBarangMouseClicked
+        this.dispose();
+        form_barang form = new form_barang();
+        form.setVisible(true);
+    }//GEN-LAST:event_jMenuBarangMouseClicked
+
+    private void jMenuJenisBarangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuJenisBarangMouseClicked
+        this.dispose();
+        form_jenisbarang form = new form_jenisbarang();
+        form.setVisible(true);
+    }//GEN-LAST:event_jMenuJenisBarangMouseClicked
+
+    private void jMenuKasirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuKasirMouseClicked
+        this.dispose();
+        form_kasir form = new form_kasir();
+        form.setVisible(true);
+    }//GEN-LAST:event_jMenuKasirMouseClicked
 
     /**
      * @param args the command line arguments
@@ -305,6 +353,10 @@ public class form_jenisbarang extends javax.swing.JFrame {
     private javax.swing.JTextField inputIdJenisBarang;
     private javax.swing.JTextField inputJenisBarang;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu jMenuBarang;
+    private javax.swing.JMenu jMenuJenisBarang;
+    private javax.swing.JMenu jMenuKasir;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelJenisBarang;
     private javax.swing.JTable tableData;

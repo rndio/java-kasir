@@ -4,17 +4,69 @@
  */
 package DashboardAdmin;
 
+import java.sql.*;
+import java.text.SimpleDateFormat;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author MrSimamora
  */
 public class form_kasir extends javax.swing.JFrame {
-
-    /**
-     * Creates new form form_jenisbarang
-     */
+    Connection cn = Function.DatabaseConnection.getConnection();
+    
     public form_kasir() {
         initComponents();
+        getDataTable();
+        txtIDKasir.setVisible(false);
+    }
+    
+    private void clearForm(){
+        txtNamaKasir.setText("");
+        txtNoHP.setText("");
+        txtPassword.setText("");
+        txtTglGabung.setText("01-01-1970");
+        txtUsername.setText("");
+        btnAction.setText("Create");
+        txtUsername.setVisible(true);
+        txtPassword.setVisible(true);
+        labelUsername.setVisible(true);
+        labelPassword.setVisible(true);
+    }
+    
+    private void getDataTable(){
+        try{
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT *, DATE_FORMAT(tk.tgl_gabung, '%d-%m-%Y') AS formatted_tgl_gabung FROM `tbl_kasir` AS tk LEFT JOIN tbl_users AS tu ON tk.id_kasir = tu.kasir_id");
+            
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("ID");
+            model.addColumn("Nama");
+            model.addColumn("Username");
+            model.addColumn("No HP");
+            model.addColumn("Tgl Gabung");
+            
+            model.getDataVector().removeAllElements();
+            model.fireTableDataChanged();
+            model.setRowCount(0);
+            
+            while(rs.next()){
+                Object[] data = {
+                  rs.getString("id_kasir"),
+                  rs.getString("nm_kasir"),
+                  rs.getString("username"),
+                  rs.getString("no_hp"),
+                  rs.getString("formatted_tgl_gabung")
+                };
+                model.addRow(data); 
+            }
+            tableData.setCellEditor(null);
+            tableData.setModel(model);
+            
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, e);
+        }
     }
 
     /**
@@ -28,16 +80,25 @@ public class form_kasir extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        txtNamaKasir = new javax.swing.JTextField();
+        btnAction = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
+        btnCancel = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jTextField2 = new javax.swing.JTextField();
+        tableData = new javax.swing.JTable();
+        txtNoHP = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        txtTglGabung = new javax.swing.JTextField();
+        labelUsername = new javax.swing.JLabel();
+        txtUsername = new javax.swing.JTextField();
+        labelPassword = new javax.swing.JLabel();
+        txtPassword = new javax.swing.JTextField();
+        txtIDKasir = new javax.swing.JTextField();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenuBarang = new javax.swing.JMenu();
+        jMenuJenisBarang = new javax.swing.JMenu();
+        jMenuKasir = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -46,24 +107,28 @@ public class form_kasir extends javax.swing.JFrame {
 
         jLabel2.setText("Nama Kasir :");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        btnAction.setText("Create");
+        btnAction.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                btnActionActionPerformed(evt);
             }
         });
 
-        jButton1.setText("Create");
-
-        jButton2.setText("Edit");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnDelete.setText("Delete");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnDeleteActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Delete");
+        btnCancel.setText("Cancel");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tableData.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -89,81 +154,131 @@ public class form_kasir extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
-
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+        tableData.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableDataMouseClicked(evt);
             }
         });
+        jScrollPane1.setViewportView(tableData);
 
         jLabel3.setText("No HP :");
 
         jLabel4.setText("Tgl Gabung :");
 
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+        txtTglGabung.setText("01-01-1970");
+        txtTglGabung.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
+                txtTglGabungActionPerformed(evt);
             }
         });
+
+        labelUsername.setText("Username :");
+
+        labelPassword.setText("Password :");
+
+        txtIDKasir.setEditable(false);
+        txtIDKasir.setFocusable(false);
+
+        jMenuBarang.setText("Barang");
+        jMenuBarang.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuBarangMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(jMenuBarang);
+
+        jMenuJenisBarang.setText("Jenis Barang");
+        jMenuJenisBarang.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuJenisBarangMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(jMenuJenisBarang);
+
+        jMenuKasir.setText("Kasir");
+        jMenuKasir.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuKasirMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(jMenuKasir);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(152, 152, 152)
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 160, Short.MAX_VALUE)
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1))
+                        .addGap(152, 152, 152)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtIDKasir, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField3)
-                            .addComponent(jTextField2))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 160, Short.MAX_VALUE)
+                                .addComponent(btnAction)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnDelete)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnCancel))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtNamaKasir))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel4)
+                                    .addComponent(labelUsername)
+                                    .addComponent(labelPassword))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtPassword)
+                                    .addComponent(txtUsername)
+                                    .addComponent(txtNoHP)
+                                    .addComponent(txtTglGabung, javax.swing.GroupLayout.Alignment.TRAILING))))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(jLabel1)
+                .addGap(10, 10, 10)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(txtIDKasir, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNamaKasir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(txtNoHP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtTglGabung, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelUsername)
+                    .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelPassword)
+                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAction)
+                    .addComponent(btnDelete)
+                    .addComponent(btnCancel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -171,21 +286,133 @@ public class form_kasir extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        if(txtIDKasir.getText().equals("")){
+            JOptionPane.showMessageDialog(null, "Silahkan Pilih Data yg akan dihapus!");
+        }else{
+            int jawab = JOptionPane.showConfirmDialog(null, "Apakah anda yakin ingin menghapus data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+            if(jawab == 0){
+                try{
+                PreparedStatement psmt = cn.prepareStatement("DELETE FROM tbl_kasir WHERE id_kasir = ?");
+                psmt.setString(1, txtIDKasir.getText());
+                psmt.executeUpdate();
+                psmt.close();
+                clearForm();
+                getDataTable();
+                }catch(Exception e){
+                    JOptionPane.showMessageDialog(null, e, "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+            }
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void jMenuBarangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuBarangMouseClicked
+        this.dispose();
+        form_barang form = new form_barang();
+        form.setVisible(true);
+    }//GEN-LAST:event_jMenuBarangMouseClicked
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    private void jMenuJenisBarangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuJenisBarangMouseClicked
+        this.dispose();
+        form_jenisbarang form = new form_jenisbarang();
+        form.setVisible(true);
+    }//GEN-LAST:event_jMenuJenisBarangMouseClicked
 
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+    private void jMenuKasirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuKasirMouseClicked
+        this.dispose();
+        form_kasir form = new form_kasir();
+        form.setVisible(true);
+    }//GEN-LAST:event_jMenuKasirMouseClicked
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        clearForm();
+    }//GEN-LAST:event_btnCancelActionPerformed
+
+    private void btnActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActionActionPerformed
+        try{
+            Statement st = cn.createStatement();
+            if(txtNamaKasir.getText().equals("")){
+                JOptionPane.showMessageDialog(null, "Data tidak boleh kosong!", "Validasi Data", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            
+            // Simpan
+            if(btnAction.getText().equals("Create")){
+                
+                String dateString = txtTglGabung.getText();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                java.util.Date tglExp = dateFormat.parse(dateString);
+                java.sql.Date sqlTglExp = new java.sql.Date(tglExp.getTime());
+                
+                
+                try(PreparedStatement psmt = cn.prepareStatement("INSERT INTO tbl_kasir (nm_kasir,tgl_gabung,no_hp) VALUES (?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS)) {
+                    psmt.setString(1, txtNamaKasir.getText());
+                    psmt.setDate(2, sqlTglExp);
+                    psmt.setString(3, txtNoHP.getText());
+                int affectedRows = psmt.executeUpdate();
+        
+                if(affectedRows > 0){
+                try (ResultSet generatedKeys = psmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int lastInsertedId = generatedKeys.getInt(1);
+                    for (int i = 0; i < tableData.getRowCount(); i++) {
+                        PreparedStatement psmt2 = cn.prepareStatement("INSERT INTO tbl_users (username,password,role,kasir_id) VALUES (?,MD5(?),?,?)");
+                        psmt2.setString(1, txtUsername.getText());
+                        psmt2.setString(2, txtPassword.getText());
+                        psmt2.setInt(3, 1);
+                        psmt2.setInt(4, lastInsertedId);
+                        psmt2.executeUpdate();
+                    }
+                    JOptionPane.showMessageDialog(null, "Kasir Berhasil Ditambahkan!");
+                    clearForm();
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null,"No rows affected.");
+        }
+            
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+            }else{
+                
+                String dateString = txtTglGabung.getText();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                java.util.Date tglExp = dateFormat.parse(dateString);
+                java.sql.Date sqlTglExp = new java.sql.Date(tglExp.getTime());
+                
+                String sql = "UPDATE tbl_kasir SET nm_kasir = ?, tgl_gabung = ? WHERE id_kasir = ?";
+                PreparedStatement myStmt = cn.prepareStatement(sql);
+                myStmt.setString(1, txtNamaKasir.getText());
+                myStmt.setDate(2, sqlTglExp);
+                myStmt.setString(3, txtIDKasir.getText());
+                myStmt.executeUpdate();
+                clearForm();
+            }
+            getDataTable();
+            
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }//GEN-LAST:event_btnActionActionPerformed
+
+    private void tableDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableDataMouseClicked
+        txtNamaKasir.setText(tableData.getValueAt(tableData.getSelectedRow(), 1).toString());
+        txtUsername.setText(tableData.getValueAt(tableData.getSelectedRow(), 2).toString());
+        txtNoHP.setText(tableData.getValueAt(tableData.getSelectedRow(), 3).toString());
+        txtTglGabung.setText(tableData.getValueAt(tableData.getSelectedRow(), 4).toString());
+        txtIDKasir.setText(tableData.getValueAt(tableData.getSelectedRow(), 0).toString());
+        btnAction.setText("Ubah");
+        txtUsername.setVisible(false);
+        txtPassword.setVisible(false);
+        labelUsername.setVisible(false);
+        labelPassword.setVisible(false);
+    }//GEN-LAST:event_tableDataMouseClicked
+
+    private void txtTglGabungActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTglGabungActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
+    }//GEN-LAST:event_txtTglGabungActionPerformed
 
     /**
      * @param args the command line arguments
@@ -224,17 +451,26 @@ public class form_kasir extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton btnAction;
+    private javax.swing.JButton btnCancel;
+    private javax.swing.JButton btnDelete;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu jMenuBarang;
+    private javax.swing.JMenu jMenuJenisBarang;
+    private javax.swing.JMenu jMenuKasir;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JLabel labelPassword;
+    private javax.swing.JLabel labelUsername;
+    private javax.swing.JTable tableData;
+    private javax.swing.JTextField txtIDKasir;
+    private javax.swing.JTextField txtNamaKasir;
+    private javax.swing.JTextField txtNoHP;
+    private javax.swing.JTextField txtPassword;
+    private javax.swing.JTextField txtTglGabung;
+    private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 }
