@@ -504,6 +504,9 @@ public class Transaksi extends javax.swing.JFrame {
                         psmt2.executeUpdate();
                     }
                     JOptionPane.showMessageDialog(null, "Transaksi Berhasil!");
+                    Receipt x = new Receipt();
+                    x.render(lastInsertedId);
+                    x.printFrame();
                     clearTable();
                     clearForm();
                 }

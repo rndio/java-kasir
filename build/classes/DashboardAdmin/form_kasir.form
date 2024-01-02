@@ -20,12 +20,12 @@
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jMenuJenisBarangMouseClicked"/>
           </Events>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="jMenuKasir">
+        <Menu class="javax.swing.JMenu" name="jMenuTransaksi">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Kasir"/>
+            <Property name="text" type="java.lang.String" value="Transaksi"/>
           </Properties>
           <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jMenuKasirMouseClicked"/>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jMenuTransaksiMouseClicked"/>
           </Events>
         </Menu>
       </SubComponents>

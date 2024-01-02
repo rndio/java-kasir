@@ -4,6 +4,7 @@
  */
 package DashboardAdmin;
 
+import DashboardKasir.Receipt;
 import Function.*;
 import java.sql.*;
 import javax.swing.JOptionPane;
@@ -206,7 +207,9 @@ public class form_transaksi extends javax.swing.JFrame {
     private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
         try {
          String idTransaksi = tableData.getValueAt(tableData.getSelectedRow(), 0).toString();
-        JOptionPane.showMessageDialog(null, idTransaksi);   
+            Receipt x = new Receipt();
+            x.render(Integer.parseInt(idTransaksi));
+            x.printFrame();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
@@ -230,6 +233,10 @@ public class form_transaksi extends javax.swing.JFrame {
             }
     }//GEN-LAST:event_btnHapusActionPerformed
 
+    private void tableDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableDataMouseClicked
+        txtIDTransaksi.setText(tableData.getValueAt(tableData.getSelectedRow(), 0).toString());
+    }//GEN-LAST:event_tableDataMouseClicked
+
     private void jMenuBarangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuBarangMouseClicked
         this.dispose();
         form_barang form = new form_barang();
@@ -247,10 +254,6 @@ public class form_transaksi extends javax.swing.JFrame {
         form_kasir form = new form_kasir();
         form.setVisible(true);
     }//GEN-LAST:event_jMenuKasirMouseClicked
-
-    private void tableDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableDataMouseClicked
-        txtIDTransaksi.setText(tableData.getValueAt(tableData.getSelectedRow(), 0).toString());
-    }//GEN-LAST:event_tableDataMouseClicked
 
     /**
      * @param args the command line arguments

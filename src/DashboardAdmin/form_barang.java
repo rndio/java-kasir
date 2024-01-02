@@ -120,9 +120,9 @@ public class form_barang extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         kd_barang = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenuBarang = new javax.swing.JMenu();
         jMenuJenisBarang = new javax.swing.JMenu();
         jMenuKasir = new javax.swing.JMenu();
+        jMenuTransaksi = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -229,14 +229,6 @@ public class form_barang extends javax.swing.JFrame {
 
         jLabel7.setText("ID Barang");
 
-        jMenuBarang.setText("Barang");
-        jMenuBarang.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jMenuBarangMouseClicked(evt);
-            }
-        });
-        jMenuBar1.add(jMenuBarang);
-
         jMenuJenisBarang.setText("Jenis Barang");
         jMenuJenisBarang.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -252,6 +244,14 @@ public class form_barang extends javax.swing.JFrame {
             }
         });
         jMenuBar1.add(jMenuKasir);
+
+        jMenuTransaksi.setText("Transaksi");
+        jMenuTransaksi.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuTransaksiMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(jMenuTransaksi);
 
         setJMenuBar(jMenuBar1);
 
@@ -476,12 +476,6 @@ public class form_barang extends javax.swing.JFrame {
         btn_simpan.setText("Ubah");
     }//GEN-LAST:event_tableDataMouseClicked
 
-    private void jMenuBarangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuBarangMouseClicked
-        this.dispose();
-        form_barang form = new form_barang();
-        form.setVisible(true);
-    }//GEN-LAST:event_jMenuBarangMouseClicked
-
     private void jMenuJenisBarangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuJenisBarangMouseClicked
         this.dispose();
         form_jenisbarang form = new form_jenisbarang();
@@ -493,6 +487,12 @@ public class form_barang extends javax.swing.JFrame {
         form_kasir form = new form_kasir();
         form.setVisible(true);
     }//GEN-LAST:event_jMenuKasirMouseClicked
+
+    private void jMenuTransaksiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuTransaksiMouseClicked
+        this.dispose();
+        form_transaksi form = new form_transaksi();
+        form.setVisible(true);
+    }//GEN-LAST:event_jMenuTransaksiMouseClicked
 
     /**
      * @param args the command line arguments
@@ -544,9 +544,9 @@ public class form_barang extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenu jMenuBarang;
     private javax.swing.JMenu jMenuJenisBarang;
     private javax.swing.JMenu jMenuKasir;
+    private javax.swing.JMenu jMenuTransaksi;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jumlah;
     private javax.swing.JTextField kd_barang;
